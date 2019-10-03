@@ -1,0 +1,4 @@
+﻿  main.cpp
+c:\users\ananth\source\repos\ananthanatarajan_particlesystem\ananthanatarajan_particlesystem\main.cpp(69): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\ananth\source\repos\ananthanatarajan_particlesystem\ananthanatarajan_particlesystem\main.cpp(211): warning C4305: 'initializing': truncation from 'double' to 'float'
+  AnanthaNatarajan_ParticleSystem.vcxproj -> C:\Users\Ananth\source\repos\AnanthaNatarajan_ParticleSystem\Debug\AnanthaNatarajan_ParticleSystem.exe
