@@ -124,8 +124,8 @@ std::stack <int> deactiveParticleList;
 int deactiveCount = MaxParticles;
 glm::vec3 normalTriangle, normalTriangle2;
 glm::vec3 startGenerator;
-glm::vec3 defaultParticleAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
-//glm::vec3 defaultParticleAcceleration = glm::vec3(0.0f, -1.0f, 0.0f);//
+//glm::vec3 defaultParticleAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 defaultParticleAcceleration = glm::vec3(0.0f, -1.0f, 0.0f);//
 
 int main() {
 	
