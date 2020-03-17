@@ -1,4 +1,4 @@
 ﻿  main.cpp
-c:\users\ananth\documents\github\particle-simulation\ananthanatarajan_particlesystem\main.cpp(69): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\ananth\documents\github\particle-simulation\ananthanatarajan_particlesystem\main.cpp(211): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\ananth\documents\github\particle-simulation\ananthanatarajan_particlesystem\main.cpp(58): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\ananth\documents\github\particle-simulation\ananthanatarajan_particlesystem\main.cpp(61): warning C4305: 'initializing': truncation from 'double' to 'float'
   AnanthaNatarajan_ParticleSystem.vcxproj -> C:\Users\Ananth\Documents\GitHub\Particle-Simulation\Debug\AnanthaNatarajan_ParticleSystem.exe

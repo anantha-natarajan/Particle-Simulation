@@ -29,28 +29,24 @@ External Libraries Used:
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/constants.hpp"
 #include "glm/gtx/scalar_multiplication.hpp"
-
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "State.h"
-
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
+#define PI 3.14159265
+#define MaxParticles 1000
 
 bool gFullScreen = false;
 GLFWwindow *pwindow = NULL;
 bool gWireframe = false;
 int gWindowWidth = 1280;
 int gWindowHeight = 800;
-
 GLFWwindow *GUIwindow = NULL;
 int guiWindowWidth = 630;
 int guiWindowHeight = 600;
-
-
-bool simulation = false;
-float displayRate = 0.0125f;
 
 OrbitCamera orbitCam;
 float gYaw = 0.0f;
@@ -58,48 +54,35 @@ float gPitch = 0.0f;
 float gRadius = 1000.0f;
 const float MOUSE_SENSITIVITY = 0.25f;
 
-
-
-float sphereRadius = 1.0f;
-glm::vec3 startSpherePos = glm::vec3(0.0f, 0.0f, -100.0f);
-glm::vec3 windVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 initialVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
-float g = -10.0;
+// SIMULATION SETTINGS
+float h = 0.0850;
+float displayRate = 0.0125f;
 float restitution = 0.2f, friction = 0.9f;
 float d = 0.3;
-
-void onKeyPress(GLFWwindow* window, int key, int scancode,int action, int mode);
-void glfw_OnFrameBufferSize(GLFWwindow* window,int width, int height);
-void glfw_onMouseMove(GLFWwindow* window, double posX, double posY);
-bool initOpengl();
-
-bool generate = false;
 int NP = 0;
-
-double startGenerationTime;
+bool simulation = false;
 bool writeFile = false;
 
 std::default_random_engine generator;
-#define PI 3.14159265
+glm::vec3 startGenerator, GeneratorDirection;
+std::stack <int> deactiveParticleList;
+int deactiveCount = MaxParticles;
 
-double uniRandScalar(double umin, double umax);
-double normRandScalar(double mean, double sd);
-glm::vec3 vectorGenerator_S();
-glm::vec3 vectorGenerator_Du(glm::vec3 w, double maxDisplaceAngle);
-glm::vec3 vectorGenerator_Dg(glm::vec3 w, double maxDisplaceAngle);// StandardDeviation = maxDisplaceAngle/3
-glm::vec3 positionGenerator_Cu(glm::vec3 center, glm::vec3 surfaceNormal, double R);
-glm::vec3 positionGenerator_Cg(glm::vec3 center, glm::vec3 surfaceNormal, double R);// Radius  = 3*StandardDeviation
-void GenerateRandomParticle();
-void writeParticleData();
-int FrameNumber = 1;
+//This gives a default acceleration to all the particles in the simulation
+//glm::vec3 defaultParticleAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 defaultParticleAcceleration = glm::vec3(0.0f, -1.0f, 0.0f);
+//Giving a WindVelocity will blow the particles in that direction
+glm::vec3 windVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 generatorPosition = glm::vec3(0.0f, 5.0f, -100.0f);
+glm::vec3 defaultParticleColor = glm::vec3(1.0f, 0.0f, 0.0f);
 
 struct particle {
 
 	particle() {
-		position = glm::vec3(0.0f, 5.0f, -100.0f);
+		position = generatorPosition;
 		velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-		color = glm::vec3(1.0f, 0.0f, 0.0f);
-		acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
+		color = defaultParticleColor;
+		acceleration = defaultParticleAcceleration;
 		active = false;
 		birthTime = 0.0f;
 		age = 0.0f;
@@ -114,18 +97,23 @@ struct particle {
 	bool active;
 };
 
-void testAndDeactivate(double currentTime);
-bool DeactivateDeadParticle(int i, double currentTime);
-#define MaxParticles 1000
 particle constrainedParticleList[MaxParticles];
-std::vector<particle> particleList;
+
+void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mode);
+void glfw_OnFrameBufferSize(GLFWwindow* window, int width, int height);
+void glfw_onMouseMove(GLFWwindow* window, double posX, double posY);
+bool initOpengl();
+double uniRandScalar(double umin, double umax);
+double normRandScalar(double mean, double sd);
+glm::vec3 vectorGenerator_S();
+glm::vec3 vectorGenerator_Du(glm::vec3 w, double maxDisplaceAngle);
+glm::vec3 vectorGenerator_Dg(glm::vec3 w, double maxDisplaceAngle);// StandardDeviation = maxDisplaceAngle/3
+glm::vec3 positionGenerator_Cu(glm::vec3 center, glm::vec3 surfaceNormal, double R);
+glm::vec3 positionGenerator_Cg(glm::vec3 center, glm::vec3 surfaceNormal, double R);// Radius  = 3*StandardDeviation
+
+void GenerateRandomParticle();
+bool testAndDeactivate(double currentTime, int particle);
 int findDeactiveSpot();
-std::stack <int> deactiveParticleList;
-int deactiveCount = MaxParticles;
-glm::vec3 normalTriangle, normalTriangle2;
-glm::vec3 startGenerator;
-//glm::vec3 defaultParticleAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
-glm::vec3 defaultParticleAcceleration = glm::vec3(0.0f, -1.0f, 0.0f);//
 
 int main() {
 	
@@ -133,90 +121,64 @@ int main() {
 		std::cout << "OpenGl initialization failed" << std::endl;
 		return -1;
 	}
-
-	//ImVec4 clear_color = ImVec4(0.22f, 0.289f, 0.42f, 1.00f);
-	ImVec4 clear_color = ImVec4(0.0f, 0.0f, 0.0f, 1.00f);
+	glm::vec4 clear_color = glm::vec4(0.0f, 0.0f, 0.0f, 1.00f);
+	glm::vec3 normalTriangle, netAcceleration;
 
 	GLfloat particleGenerator[] = {
 		0.0f,0.0f,0.0f, 1.0f,0.0f,0.0f
 	};
-
 	glm::vec3 VertexA = glm::vec3(-5.0f, 5.0f, -5.0f);
 	glm::vec3 VertexB = glm::vec3(5.0f, -5.0f, -5.0f);
 	glm::vec3 VertexC = glm::vec3(-5.0f, -5.0f, 5.0f);
-
 	GLfloat triangleVertices[] = {
 		VertexA.x,VertexA.y,VertexA.z, 0.0f,1.0f,1.0f,
 		VertexB.x,VertexB.y,VertexB.z, 0.0f,1.0f,1.0f,
 		VertexC.x,VertexC.y,VertexC.z, 0.0f,1.0f,1.0f
 	};
 	normalTriangle = glm::cross((VertexC - VertexA), (VertexB - VertexA)) / glm::length(glm::cross((VertexC - VertexA), (VertexB - VertexA)));
-	
+	GeneratorDirection = -normalTriangle;
 	glm::vec3 translatedVertexA = VertexA + glm::vec3(-10.0f, 0.0f, -100.0f);
 	glm::vec3 translatedVertexB = VertexB + glm::vec3(-10.0f, 0.0f, -100.0f);
 	glm::vec3 translatedVertexC = VertexC + glm::vec3(-10.0f, 0.0f, -100.0f);
 
+	//To determine the Barycentric coordinates which is used for collision detection
 	glm::vec3 vn = glm::cross((translatedVertexB - translatedVertexA), (translatedVertexC - translatedVertexB));
 	double A = glm::length(vn) /2;
 	double u, v, w;
-
 	glm::vec3 centroid = glm::vec3((translatedVertexA.x + translatedVertexB.x + translatedVertexC.x) / 3, (translatedVertexA.y + translatedVertexB.y + translatedVertexC.y) / 3, (translatedVertexA.z + translatedVertexB.z + translatedVertexC.z) / 3);
-
 	startGenerator = centroid + normalTriangle * 20;
 
-
+	//INITIALIZING THE VERTEX ARRAY OBJECTS & VERTEX BUFFER OBJECTS for the Traingle and the Particles
 	//polygon
 	GLuint vboT, vaoT;
 	glGenVertexArrays(1, &vaoT);
 	glBindVertexArray(vaoT);
-
 	glGenBuffers(1, &vboT);
 	glBindBuffer(GL_ARRAY_BUFFER, vboT);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
-
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, NULL);
 	glEnableVertexAttribArray(0);
-
 	//color
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (GLvoid*)(sizeof(GLfloat) * 3));
 	glEnableVertexAttribArray(1);
 
-	//particleGenerator
+	//particles
 	GLuint vboP, vaoP;
-
 	glGenVertexArrays(1, &vaoP);
 	glBindVertexArray(vaoP);
-
 	glGenBuffers(1, &vboP);
 	glBindBuffer(GL_ARRAY_BUFFER, vboP);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(particleGenerator), particleGenerator, GL_DYNAMIC_DRAW);
-
 	//position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, NULL);
 	glEnableVertexAttribArray(0);
-
 	//color
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 6, (GLvoid*)(sizeof(GLfloat) * 3));
 	glEnableVertexAttribArray(1);
 
-
 	ShaderProgram shaderProgram;
 	shaderProgram.loadShader("basic.vert" , "basic.frag");
-
 	glfwSetFramebufferSizeCallback(pwindow, glfw_OnFrameBufferSize);
-
-
-	float t = 0;
-	double n = 0;
-	float h = 0.0850;
-
-	bool CollisionDetected = false;
-	double displayTimer = displayRate;
-	double lastTime = glfwGetTime();
-	double simulationTimer = h;
-	double simulationLastTime = glfwGetTime();
-
-	double fr = 0.0f;
 
 	glm::mat4 projection;
 	glm::vec3 triangleColor = glm::vec3(0.0f, 0.8f, 0.0f);
@@ -226,11 +188,8 @@ int main() {
 	shaderProgram.setUniform("projection", projection);
 	shaderProgram.setUniform("part_color", triangleColor);
 	glm::mat4 partMatrix = glm::mat4(1.0f);
-	glm::vec3 netAcceleration = glm::vec3(0.0f, 0.0f, 0.0f);
-
-	glm::vec3 windVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
 	
-
+	//Initialize The Deactive Particle List
 	for (int i = MaxParticles-1; i >= 0; i--) {
 		deactiveParticleList.push(i);
 	}
@@ -243,20 +202,11 @@ int main() {
 		glfwMakeContextCurrent(pwindow);
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
 		glfwPollEvents();
-
 		double currentTime = glfwGetTime();
-		double deltaTime = currentTime - lastTime;
-		displayTimer -= deltaTime;
-		lastTime = currentTime;
-
-		if (displayTimer < 0.0f) {
-			displayTimer = displayRate;
-			n = 0;
-		}
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glm::mat4 view, particleModel[100], polygonModel;
+		// Setting up the Model, View matrix to draw the Triangle on the screen
+		glm::mat4 view, polygonModel;
 		orbitCam.setLookAt(glm::vec3(0.0f,0.0f,-100.0f));
 		orbitCam.rotate(gYaw, gPitch);
 		orbitCam.setRadius(gRadius);
@@ -268,33 +218,17 @@ int main() {
 		glBindVertexArray(vaoT);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
-
-		glm::mat4 polygonModel2 = glm::translate(polygonModel2, glm::vec3(10.0f, 0.0f, -100.0f));// *glm::scale(polygonModel, glm::vec3(5, 5, 5));
-		shaderProgram.setUniform("model", polygonModel2);
-		glBindVertexArray(vaoT);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
-		glBindVertexArray(0);
-
-		glm::mat4 pModel = glm::mat4(1.0f);
-		pModel = glm::translate(pModel, translatedVertexA);
-		shaderProgram.setUniform("model", pModel);
-		glBindVertexArray(vaoP);
-		glDrawArrays(GL_POINTS, 0, 1);
-		glBindVertexArray(0);
 		
-		
+		// SIMULATION LOOP 
 		if (simulation) {
+			/*if (true) {
+				for (int i = 0; i < MaxParticles; i++) {
+					myfile << (int)FrameNumber << " " << (double)constrainedParticleList[i].position.x << " " << (double)constrainedParticleList[i].position.y << " " << (double)constrainedParticleList[i].position.z << "\n";
+				}
+			}
+			FrameNumber++;*/
 
-		//	if (true) {
-				//writeParticleData();
-
-				//for (int i = 0; i < MaxParticles; i++) {
-					//myfile << (int)FrameNumber << " " << (double)constrainedParticleList[i].position.x << " " << (double)constrainedParticleList[i].position.y << " " << (double)constrainedParticleList[i].position.z << "\n";
-				//z}
-
-		//	}
-				FrameNumber++;
-
+			// GENERATE PARTICLES AS SIMULATION RUNS
 			if (NP<MaxParticles) {
 				//std::cout << "No of particles " << NP << std::endl;
 				for (int j = 0; j < 20; j++) {
@@ -302,48 +236,34 @@ int main() {
 				}
 			}
 
-			//testAndDeactivate(currentTime);
-
-			//simulate for every particle generated and active
+			//SIMULATE FOR EVERY GENERATED PARTICLE
 			for (int j = 0; j < MaxParticles;j++) {
 				if (constrainedParticleList[j].active == true) {
-					if (currentTime - constrainedParticleList[j].birthTime > constrainedParticleList[j].age) {
-						deactiveParticleList.push(j);
-						deactiveCount++;
-						constrainedParticleList[j].active = false;
-						constrainedParticleList[j].position = startGenerator;
-						constrainedParticleList[j].velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-						constrainedParticleList[j].birthTime = 0.0f;
-						constrainedParticleList[j].color = glm::vec3(1.0f, 0.0f, 0.0f);
-						//constrainedParticleList[j].acceleration = defaultParticleAcceleration;
+					// TEST & SIMULATE FOR PARTICLES
+					if (testAndDeactivate(glfwGetTime(), j)) {
+						// PARTICLE IS DEAD
 						NP--;
 						continue;
-					}
-					else {
-						//if (constrainedParticleList[j].active == true) {
+					}else{
+						// PARTICLE IS ACTIVE
+						// COLLISION DETECTION and RESPONSE
 						glm::vec3 newV, newP;
 						double tHit;
 						glm::vec3 xHit;
-						//s.time = n;
 						netAcceleration = constrainedParticleList[j].acceleration + (windVelocity - constrainedParticleList[j].velocity) * d;
-						//netAcceleration = glm::vec3(0.0f, -0.0f, 0.0f);
+
+						// CALCULATING THE NEW VELOCITY AND POSITION AFTER THE TIMESTEP
 						newV = constrainedParticleList[j].velocity + netAcceleration * h;
 						newP = constrainedParticleList[j].position + constrainedParticleList[j].velocity * h;
-						
+		
+						// ESTIMATING THE TIME TAKEN TO HIT THE TRIANGLE	
 						tHit = glm::dot((translatedVertexA - constrainedParticleList[j].position),normalTriangle)/ glm::dot(constrainedParticleList[j].velocity,normalTriangle);
-
 						if (tHit >= 0 && tHit < h) {
-							
 							xHit = constrainedParticleList[j].position + tHit * constrainedParticleList[j].velocity;
-
-							//std::cout << xHit.x << " - " << xHit.y << " - " << xHit.z << std::endl;
-
 							u = glm::dot(glm::cross((translatedVertexB - translatedVertexC), (xHit - translatedVertexC)),normalTriangle) / (2*A);
 							v = glm::dot(glm::cross((translatedVertexA - translatedVertexB), (xHit - translatedVertexB)), normalTriangle) / (2 * A);
 							w = 1 - u - v;
-
 							if (u >= 0 && v >= 0 && w >= 0) {
-
 								//std::cout << "collision occured in that timestep inside the triangle" << std::endl;
 								glm::vec3 newV_AC, newP_AC, newVn, newVt;
 								double newD = glm::dot(newP - translatedVertexA, normalTriangle);
@@ -351,22 +271,23 @@ int main() {
 								newVn = glm::dot(newV, normalTriangle)*normalTriangle;
 								newVt = newV - newVn;
 								newV_AC = -restitution * newVn + (1 - friction)*newVt;
-
 								newV = newV_AC;
 								newP = newP_AC;
-
 								constrainedParticleList[j].color = glm::vec3(0.0f, 0.0f, 1.0f);
+								//Reverse accelertion after collision
 								constrainedParticleList[j].acceleration = -constrainedParticleList[j].acceleration;
 								//netAcceleration = glm::vec3(0.0f, -0.05f, 0.0f);
-								
 							}
-
 						}
 
+						//INTEGRATION - assigning the new position, velocity to the particle
 						constrainedParticleList[j].position = newP;
 						constrainedParticleList[j].velocity = newV;
-
+						
+						//DRAWING PARTICLE IN ITS OWN COLOR
 						particleColor = constrainedParticleList[j].color;
+
+						// INITIALISE MODEL MATRIX and DRAW THE PARTICLE 
 						glm::mat4 particleModel = glm::translate(partMatrix, newP);
 						shaderProgram.setUniform("part_color", particleColor);
 						shaderProgram.setUniform("model", particleModel);
@@ -375,22 +296,15 @@ int main() {
 						glBindVertexArray(0);
 
 					}
-
 				}
-				
 				}
-			n = n + h;
 		}
-
-		
 		glfwSwapBuffers(pwindow);
 		
 	}
-
 	myfile.close();
 	glfwTerminate();
 	return 0;
-
 }
 
 bool initOpengl() {
@@ -465,13 +379,11 @@ double uniRandScalar(double umin, double umax) {
 	double temp = distribution(generator);
 	return temp;
 }
-
 double normRandScalar(double mean, double sd) {
 	std::normal_distribution<double> distribution(mean, sd);
 	double temp = distribution(generator);
 	return temp;
 }
-
 glm::vec3 vectorGenerator_S() {
 	double theta, height, radSph;
 	theta = uniRandScalar(-180, 180);
@@ -598,8 +510,8 @@ void GenerateRandomParticle() {
 	//fill in the particle
 	int deactiveIndex = findDeactiveSpot();
 	if (deactiveIndex != -1) {
-		constrainedParticleList[deactiveIndex].velocity = vectorGenerator_Du(-normalTriangle,30);
-		//constrainedParticleList[deactiveIndex].velocity = vectorGenerator_Dg(-normalTriangle, 10);
+		constrainedParticleList[deactiveIndex].velocity = vectorGenerator_Du(GeneratorDirection,30);
+		//constrainedParticleList[deactiveIndex].velocity = vectorGenerator_Dg(GeneratorDirection, 10);
 		//constrainedParticleList[deactiveIndex].velocity = vectorGenerator_S();
 		constrainedParticleList[deactiveIndex].velocity = constrainedParticleList[deactiveIndex].velocity * 10;
 		constrainedParticleList[deactiveIndex].position = startGenerator;
@@ -616,58 +528,25 @@ void GenerateRandomParticle() {
 		//std::cout << "Not enough space" << std::endl;
 	}
 
-	/*particle temp;
-	temp.velocity = vectorGenerator_S();
-	temp.position = glm::vec3(0.0f, 5.0f, -100.0f);
-	temp.active = true;
-	temp.birthTime = glfwGetTime();
-	NP++;
-	particleList.push_back(temp);*/
 }
 
-
-void writeParticleData() {
-	std::fstream myfile;
-	myfile.open("pointCloudAllFrames.txt", std::ios::out);
-
-	for (int i = 0; i < MaxParticles; i++) {
-		myfile << (int)FrameNumber << " " << (double)constrainedParticleList[i].position.x << " " << (double)constrainedParticleList[i].position.y << " " << (double)constrainedParticleList[i].position.z << "\n";
-	}
-
-	myfile.close();
-}
-
-
-bool DeactivateDeadParticle(int i, double currentTime) {
-	
-	if (currentTime - constrainedParticleList[i].birthTime > constrainedParticleList[i].age) {
-		deactiveParticleList.push(i);
+bool testAndDeactivate(double currentTime, int particle) {
+	bool status;
+	if (currentTime - constrainedParticleList[particle].birthTime > constrainedParticleList[particle].age) {
+		deactiveParticleList.push(particle);
 		deactiveCount++;
-		constrainedParticleList[i].active = false;
-		NP--;
-		return true;
+		constrainedParticleList[particle].active = false;
+		constrainedParticleList[particle].position = generatorPosition;
+		constrainedParticleList[particle].velocity = glm::vec3(0.0f, 0.0f, 0.0f);
+		constrainedParticleList[particle].birthTime = 0.0f;
+		constrainedParticleList[particle].color = defaultParticleColor;
+		status = true;
 	}
 	else {
-		return false;
+		status = false;
 	}
 	
-}
-
-
-void testAndDeactivate(double currentTime) {
-	for (int k = 0; k < MaxParticles; k++) {
-		if (constrainedParticleList[k].active == true) {
-			if (currentTime - constrainedParticleList[k].birthTime > 10.0f) {
-				deactiveParticleList.push(k);
-				deactiveCount++;
-				constrainedParticleList[k].active = false;
-				constrainedParticleList[k].position = glm::vec3(0.0f, 5.0f, -100.0f);
-				constrainedParticleList[k].velocity = glm::vec3(0.0f, 0.0f, 0.0f);
-				constrainedParticleList[k].birthTime = 0.0f;
-				NP--;
-			}
-		}
-	}
+	return status;
 }
 
 void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mode) {
@@ -686,15 +565,8 @@ void onKeyPress(GLFWwindow* window, int key, int scancode, int action, int mode)
 
 	if (key == GLFW_KEY_S && action == GLFW_PRESS) {
 		simulation = true;
-		startGenerationTime = glfwGetTime();
 	}
 
-	if (key == GLFW_KEY_G && action == GLFW_PRESS) {
-		generate = true;
-	}
-	if (key == GLFW_KEY_G && action == GLFW_RELEASE) {
-		generate = false;
-	}
 	if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
 		writeFile = true;
 	}
@@ -732,63 +604,3 @@ void glfw_OnFrameBufferSize(GLFWwindow* window, int width, int height)
 	gWindowHeight = height;
 	glViewport(0, 0, gWindowWidth, gWindowHeight);
 }
-
-/*
-void generateParticlesContinosly() {
-	/*std::cout << genTime << std::endl;
-genTime += h;
-
-if (genTime < genEnd && genTime > genStart) {
-	NP++;
-	std::cout << "particle generating" << std::endl;
-}
-else {
-	std::cout << "number of particles generated " << NP << std::endl;
-	std::cout << "particle not generation" << std::endl;
-}
-
-
-	double deltaGenerationTime = currentTime - startGenerationTime;
-	endGenerationTime -= deltaGenerationTime;
-	if (endGenerationTime > 0.0f) {
-		if (particleCount < 10) {
-			GenerateRandomParticle();
-			particleCount++;
-			std::cout << "particle generating" << std::endl;
-		}
-		else {
-
-			std::cout << "particle generation stopped but still there is generation time" << std::endl;
-		}
-
-		/*if (int i = 0; i < h*genRate; i++) {
-			NP++;
-			std::cout << "particle generating" << std::endl;
-		}
-
-		fr = fr + (h*genRate - floor(h * genRate));
-
-		if (fr > 1) {
-			NP++;
-			fr = 0;
-		}
-
-	}
-	else {
-		std::cout << "number of particles generated " << NP << std::endl;
-		std::cout << "particle generation waiting" << std::endl;
-		interval -= deltaGenerationTime;
-		if (interval < 0.0f) {
-			std::cout << "waiting time ended" << std::endl;
-			endGenerationTime = 0.0f;
-			interval = 3.0f;
-			//particleCount = 0;
-		}
-	}
-
-	startGenerationTime = currentTime;
-}
-
-*/
-
-
