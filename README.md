@@ -23,10 +23,14 @@ SIMULATION ALGORITHM:
 
 HOW TO RUN:
  The entire project is uploaded as a Visual Studio Solution with all dependencies inside the project folder.
-Download the Project and open the AnanthaNatarajan_ParticleSimulation.sln in Visual Studio. 
+Download the Project and open the AnanthaNatarajan_ParticleSimulation.sln in Visual Studio. The program is set up for 32 bit environment
+Once opened and successfully built, hit "S" key to start the siulation. 
 
 TESTING:
  The macro "MaxParticles" determines the maximum number of particles that can be generated.
  The GenerateRandomParticle function sets the initial attributes of the particles. 
+ The testAndDeactivate function looks for particles those are dead and deactivates it
+ The findDeactiveSpot looks pops up the first element in the stack and gives to generateRandomParticle function
+ 
  As a simple case, the particles are generated towards a triangle uniformly distributed around the normal of the traingle with a max displacement of 30 degrees.
  Replacing the vectorGenerator_Du() or vectorGenerator_Dg() with vectorGenerator_S() in the statement that assigns a initial velocity to the particle will result in a particle generator generator particles in all directions
