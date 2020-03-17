@@ -612,8 +612,8 @@ void GenerateRandomParticle() {
 		NP++;
 	}
 	else {
-		std::cout << "No of particles " << NP << std::endl;
-		std::cout << "Not enough space" << std::endl;
+		//std::cout << "No of particles " << NP << std::endl;
+		//std::cout << "Not enough space" << std::endl;
 	}
 
 	/*particle temp;

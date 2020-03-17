@@ -1,0 +1,100 @@
+﻿main.obj : error LNK2019: unresolved external symbol glewInit referenced in function "bool __cdecl initOpengl(void)" (?initOpengl@@YA_NXZ)
+main.obj : error LNK2019: unresolved external symbol glfwInit referenced in function "bool __cdecl initOpengl(void)" (?initOpengl@@YA_NXZ)
+main.obj : error LNK2019: unresolved external symbol glfwTerminate referenced in function "bool __cdecl initOpengl(void)" (?initOpengl@@YA_NXZ)
+main.obj : error LNK2019: unresolved external symbol glfwGetPrimaryMonitor referenced in function "bool __cdecl initOpengl(void)" (?initOpengl@@YA_NXZ)
+main.obj : error LNK2019: unresolved external symbol glfwGetVideoMode referenced in function "bool __cdecl initOpengl(void)" (?initOpengl@@YA_NXZ)
+main.obj : error LNK2019: unresolved external symbol glfwWindowHint referenced in function "bool __cdecl initOpengl(void)" (?initOpengl@@YA_NXZ)
+main.obj : error LNK2019: unresolved external symbol glfwCreateWindow referenced in function "bool __cdecl initOpengl(void)" (?initOpengl@@YA_NXZ)
+main.obj : error LNK2019: unresolved external symbol glfwWindowShouldClose referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwSetWindowShouldClose referenced in function "void __cdecl onKeyPress(struct GLFWwindow *,int,int,int,int)" (?onKeyPress@@YAXPEAUGLFWwindow@@HHHH@Z)
+main.obj : error LNK2019: unresolved external symbol glfwSetFramebufferSizeCallback referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwPollEvents referenced in function main
+main.obj : error LNK2019: unresolved external symbol glfwGetMouseButton referenced in function "void __cdecl glfw_onMouseMove(struct GLFWwindow *,double,double)" (?glfw_onMouseMove@@YAXPEAUGLFWwindow@@NN@Z)
+imgui_impl_glfw.obj : error LNK2001: unresolved external symbol glfwGetMouseButton
+main.obj : error LNK2019: unresolved external symbol glfwSetKeyCallback referenced in function "bool __cdecl initOpengl(void)" (?initOpengl@@YA_NXZ)
+imgui_impl_glfw.obj : error LNK2001: unresolved external symbol glfwSetKeyCallback
+main.obj : error LNK2019: unresolved external symbol glfwSetCursorPosCallback referenced in function "bool __cdecl initOpengl(void)" (?initOpengl@@YA_NXZ)
+main.obj : error LNK2019: unresolved external symbol glfwGetTime referenced in function "void __cdecl GenerateRandomParticle(void)" (?GenerateRandomParticle@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2001: unresolved external symbol glfwGetTime
+main.obj : error LNK2019: unresolved external symbol glfwMakeContextCurrent referenced in function "bool __cdecl initOpengl(void)" (?initOpengl@@YA_NXZ)
+main.obj : error LNK2019: unresolved external symbol glfwSwapBuffers referenced in function main
+main.obj : error LNK2001: unresolved external symbol __glewBindBuffer
+main.obj : error LNK2001: unresolved external symbol __glewBufferData
+main.obj : error LNK2001: unresolved external symbol __glewGenBuffers
+main.obj : error LNK2001: unresolved external symbol __glewEnableVertexAttribArray
+main.obj : error LNK2001: unresolved external symbol __glewVertexAttribPointer
+main.obj : error LNK2001: unresolved external symbol __glewBindVertexArray
+main.obj : error LNK2001: unresolved external symbol __glewGenVertexArrays
+main.obj : error LNK2001: unresolved external symbol glewExperimental
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewAttachShader
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewAttachShader
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewCompileShader
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewCompileShader
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewCreateProgram
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewCreateProgram
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewCreateShader
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewCreateShader
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewDeleteProgram
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewDeleteProgram
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewDeleteShader
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewDeleteShader
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewGetProgramInfoLog
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewGetProgramInfoLog
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewGetProgramiv
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewGetProgramiv
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewGetShaderInfoLog
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewGetShaderInfoLog
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewGetShaderiv
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewGetShaderiv
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewGetUniformLocation
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewGetUniformLocation
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewLinkProgram
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewLinkProgram
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewShaderSource
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewShaderSource
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewUniform2f
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewUniform3f
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewUniform4f
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewUniformMatrix4fv
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewUniformMatrix4fv
+ShaderProgram.obj : error LNK2001: unresolved external symbol __imp___glewUseProgram
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewUseProgram
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwGetWindowSize referenced in function "void __cdecl ImGui_ImplGlfw_NewFrame(void)" (?ImGui_ImplGlfw_NewFrame@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwGetFramebufferSize referenced in function "void __cdecl ImGui_ImplGlfw_NewFrame(void)" (?ImGui_ImplGlfw_NewFrame@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwGetWindowAttrib referenced in function "void __cdecl ImGui_ImplGlfw_UpdateMousePosAndButtons(void)" (?ImGui_ImplGlfw_UpdateMousePosAndButtons@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwGetInputMode referenced in function "void __cdecl ImGui_ImplGlfw_UpdateMouseCursor(void)" (?ImGui_ImplGlfw_UpdateMouseCursor@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwSetInputMode referenced in function "void __cdecl ImGui_ImplGlfw_UpdateMouseCursor(void)" (?ImGui_ImplGlfw_UpdateMouseCursor@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwGetCursorPos referenced in function "void __cdecl ImGui_ImplGlfw_UpdateMousePosAndButtons(void)" (?ImGui_ImplGlfw_UpdateMousePosAndButtons@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwSetCursorPos referenced in function "void __cdecl ImGui_ImplGlfw_UpdateMousePosAndButtons(void)" (?ImGui_ImplGlfw_UpdateMousePosAndButtons@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwCreateStandardCursor referenced in function "bool __cdecl ImGui_ImplGlfw_Init(struct GLFWwindow *,bool,enum GlfwClientApi)" (?ImGui_ImplGlfw_Init@@YA_NPEAUGLFWwindow@@_NW4GlfwClientApi@@@Z)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwDestroyCursor referenced in function "void __cdecl ImGui_ImplGlfw_Shutdown(void)" (?ImGui_ImplGlfw_Shutdown@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwSetCursor referenced in function "void __cdecl ImGui_ImplGlfw_UpdateMouseCursor(void)" (?ImGui_ImplGlfw_UpdateMouseCursor@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwSetCharCallback referenced in function "bool __cdecl ImGui_ImplGlfw_Init(struct GLFWwindow *,bool,enum GlfwClientApi)" (?ImGui_ImplGlfw_Init@@YA_NPEAUGLFWwindow@@_NW4GlfwClientApi@@@Z)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwSetMouseButtonCallback referenced in function "bool __cdecl ImGui_ImplGlfw_Init(struct GLFWwindow *,bool,enum GlfwClientApi)" (?ImGui_ImplGlfw_Init@@YA_NPEAUGLFWwindow@@_NW4GlfwClientApi@@@Z)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwSetScrollCallback referenced in function "bool __cdecl ImGui_ImplGlfw_Init(struct GLFWwindow *,bool,enum GlfwClientApi)" (?ImGui_ImplGlfw_Init@@YA_NPEAUGLFWwindow@@_NW4GlfwClientApi@@@Z)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwGetJoystickAxes referenced in function "void __cdecl ImGui_ImplGlfw_UpdateGamepads(void)" (?ImGui_ImplGlfw_UpdateGamepads@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwGetJoystickButtons referenced in function "void __cdecl ImGui_ImplGlfw_UpdateGamepads(void)" (?ImGui_ImplGlfw_UpdateGamepads@@YAXXZ)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwSetClipboardString referenced in function "void __cdecl ImGui_ImplGlfw_SetClipboardText(void *,char const *)" (?ImGui_ImplGlfw_SetClipboardText@@YAXPEAXPEBD@Z)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwGetClipboardString referenced in function "char const * __cdecl ImGui_ImplGlfw_GetClipboardText(void *)" (?ImGui_ImplGlfw_GetClipboardText@@YAPEBDPEAX@Z)
+imgui_impl_glfw.obj : error LNK2019: unresolved external symbol glfwGetWin32Window referenced in function "bool __cdecl ImGui_ImplGlfw_Init(struct GLFWwindow *,bool,enum GlfwClientApi)" (?ImGui_ImplGlfw_Init@@YA_NPEAUGLFWwindow@@_NW4GlfwClientApi@@@Z)
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewActiveTexture
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewBlendEquation
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewBlendFuncSeparate
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewBindBuffer
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewBufferData
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewDeleteBuffers
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewGenBuffers
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewBlendEquationSeparate
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewDetachShader
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewEnableVertexAttribArray
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewGetAttribLocation
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewUniform1i
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewVertexAttribPointer
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewDrawElementsBaseVertex
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewBindSampler
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewBindVertexArray
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewDeleteVertexArrays
+imgui_impl_opengl3.obj : error LNK2001: unresolved external symbol __imp___glewGenVertexArrays
+C:\Users\Ananth\Documents\GitHub\Particle-Simulation\AnanthaNatarajan_ParticleSystem\common\lib\glfw3.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+C:\Users\Ananth\Documents\GitHub\Particle-Simulation\AnanthaNatarajan_ParticleSystem\common\lib\glew32s.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+C:\Users\Ananth\Documents\GitHub\Particle-Simulation\x64\Debug\AnanthaNatarajan_ParticleSystem.exe : fatal error LNK1120: 79 unresolved externals
